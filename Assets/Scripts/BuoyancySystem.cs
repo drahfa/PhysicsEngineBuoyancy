@@ -6,7 +6,6 @@ public class BuoyancySystem : ISystemInterface
 {
     public void Start(World world)
     {
-        Debug.Log("buoyancy start");
         var entities = world.entities;
 
         // add randomized velocity to all entities that have positions
@@ -21,7 +20,6 @@ public class BuoyancySystem : ISystemInterface
 
     public void Update(World world, float time = 0, float deltaTime = 0)
     {
-        Debug.Log("buoyancy update");
         var entities = world.entities;
         var gravity = world.gravity;
 
@@ -36,14 +34,15 @@ public class BuoyancySystem : ISystemInterface
                 //if (forceComponent.massInverse > 1e-6f)
                 //    forceComponent.force += gravity / forceComponent.massInverse;
 
-                if(world.worldBounds.height > entities.positions[i].y)
+                if(world.worldBounds.x + world.worldBounds.height > entities.positions[i].y)
                 {
                     forceComponent.force += new Vector2(0f, 10f);
                 }
                 else
                 {
-                    forceComponent.force = gravity / forceComponent.massInverse;
+                    forceComponent.force = Vector2.zero;
                 }
+                
 
                 entities.forceComponents[i] = forceComponent;
             }
