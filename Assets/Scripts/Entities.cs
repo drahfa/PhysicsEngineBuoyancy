@@ -44,6 +44,12 @@ public struct CollisionComponent
 	public float coeffOfRestitution;
 }
 
+public struct BuoyancyComponent
+{
+    public float immersedDiameter;
+    public float entityDensity;
+}
+
 public class Entities
 {
 	public List<Vector2> positions = new List<Vector2>();
@@ -51,7 +57,7 @@ public class Entities
 	public List<MoveComponent> moveComponents = new List<MoveComponent>();
 	public List<ForceComponent> forceComponents = new List<ForceComponent>();
 	public List<CollisionComponent> collisionComponents = new List<CollisionComponent>();
-    public List<BuoyancySystem> bouyancySystems = new List<BuoyancySystem>();
+    public List<BuoyancyComponent> bouyancyComponents = new List<BuoyancyComponent>();
 
 	public void AddComponent(Entity entity, EntityFlags flag)
 	{
@@ -68,7 +74,7 @@ public class Entities
 		moveComponents.Add(new MoveComponent());
 		forceComponents.Add(new ForceComponent());
 		collisionComponents.Add(new CollisionComponent());
-        bouyancySystems.Add(new BuoyancySystem());
+        bouyancyComponents.Add(new BuoyancyComponent());
 		
 		return new Entity(positions.Count - 1);
 	}

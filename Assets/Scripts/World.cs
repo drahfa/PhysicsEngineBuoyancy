@@ -14,8 +14,7 @@ public class World : MonoBehaviour
 	public Vector2 gravity = Vector2.down * 9.81f;
 
     public Rect bouyancyBounds = new Rect(-10, -5f, 20f, 4f);
-    public float waterDensity = 1030f;
-    public float entityDensity = 917f;
+    public float fluidDensity = 1030f;
 
     [NonSerialized]
 	public Entities entities;
