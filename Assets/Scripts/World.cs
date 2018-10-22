@@ -14,15 +14,26 @@ public class World : MonoBehaviour
 	public Vector2 gravity = Vector2.down * 9.81f;
 
     public Rect bouyancyBounds = new Rect(-10, -5f, 20f, 4f);
-    public float fluidDensity = 1030f;
+    public float fluidDensity = 1.30f;
 
     [NonSerialized]
 	public Entities entities;
 
 	protected List<ISystemInterface> systems;
-	
-	// Use this for initialization
-	void Start () 
+
+    public static World instance;
+
+    private void Awake()
+    {
+        if (instance != null)
+            Debug.LogError("Multiple worlds right now are not supported");
+        else
+            instance = this;
+        
+    }
+
+    // Use this for initialization
+    void Start () 
 	{
 		Profiler.BeginSample("World.Start");
 		systems = new List<ISystemInterface>();

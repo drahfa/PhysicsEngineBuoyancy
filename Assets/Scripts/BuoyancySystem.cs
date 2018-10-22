@@ -33,27 +33,46 @@ public class BuoyancySystem : ISystemInterface
                 var collisionComponent = entities.collisionComponents[i];
                 var buoyancyComponent = entities.bouyancyComponents[i];
                 //buoyancyComponent.immersedDiameter = collisionComponent.radius * 2f;
-                buoyancyComponent.entityDensity = 917f;
-                // F = m * g
-                //if (forceComponent.massInverse > 1e-6f)
-                //    forceComponent.force += gravity / forceComponent.massInverse;
+                buoyancyComponent.entityDensity = 0.917f;
 
-                if(world.worldBounds.x + world.worldBounds.height > entities.positions[i].y)
+                float submergedHeight;
+                float area;
+
+                //We calculate bouyancy force
+                if (world.bouyancyBounds.y + world.bouyancyBounds.height > entities.positions[i].y + collisionComponent.radius) //Applying force if an object is fully submerged
                 {
-                    //Vector2 weight = new Vector2(forceComponent.massInverse * world.gravity.y);
-                    //Debug.Log("weight");
-                    float area = Mathf.PI * collisionComponent.radius * collisionComponent.radius;
-                    forceComponent.force += new Vector2(0, area * Mathf.Abs(world.gravity.y));
-                    Debug.Log("forceComponent.force: " + forceComponent.force + ", area: " + area + ", world.gravity.y: " + world.gravity.y);
+                    area = Mathf.PI * collisionComponent.radius * collisionComponent.radius;
+                    forceComponent.force += new Vector2(0, world.fluidDensity * Mathf.Abs(world.gravity.y) * area); // F = p * V * g
                 }
-                else
+                else if(world.bouyancyBounds.y + world.bouyancyBounds.height > entities.positions[i].y) //Apllying force if an object is more than a half submerged
                 {
-                    forceComponent.force = Vector2.zero;
+                    submergedHeight = Mathf.Abs(entities.positions[i].y) - Mathf.Abs(world.bouyancyBounds.y + world.bouyancyBounds.height) + collisionComponent.radius;
+                    area = CircularSegmentArea(submergedHeight, collisionComponent.radius);
+                    forceComponent.force += new Vector2(0, world.fluidDensity * Mathf.Abs(world.gravity.y) * area); // F = p * V * g
+
                 }
-                
+                else if(world.bouyancyBounds.y + world.bouyancyBounds.height > entities.positions[i].y - collisionComponent.radius) //Applying force if an object is less than half submerged
+                {
+                    submergedHeight = 1f + Mathf.Abs(entities.positions[i].y) - Mathf.Abs(world.bouyancyBounds.y + world.bouyancyBounds.height) - collisionComponent.radius;
+                    area = CircularSegmentArea(submergedHeight, collisionComponent.radius);
+                    forceComponent.force += new Vector2(0, world.fluidDensity * Mathf.Abs(world.gravity.y) * area); // F = p * V * g
+                }
 
                 entities.forceComponents[i] = forceComponent;
             }
         }
+    }
+
+    float CircularSegmentArea(float segmentHeight, float radius)
+    {
+        float area;
+
+        //area = radius * radius * Mathf.Acos((radius - segmentHeight) / radius) - (radius - segmentHeight) * Mathf.Sqrt(2 * radius * segmentHeight - (segmentHeight * segmentHeight)); // Area of a Circular Segment given its height
+        //Leaving the above calculation commented. It outputs the correct result, but I guess it's too slow for the game to handle, "AAB" errors are outputed to the console, sprites stop rendering
+
+        //Assigning area value of 1 instead
+        area = 1f;
+
+        return area;
     }
 }
